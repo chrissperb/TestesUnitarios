@@ -29,6 +29,17 @@ public class LocacaoService {
 	}
 
 	public static void main(String[] args) {
-		
+		//cenario - criar e/ou instanciar todos os recursos necessários para o teste do método
+		LocacaoService service = new LocacaoService();
+		Usuario usuario = new Usuario("Usuario 1");
+		Filme filme = new Filme("Filme 1", 2,5.0);
+
+		// ação - aplicar o método no ecnário criado
+		Locacao locacao = service.alugarFilme(usuario, filme);
+
+		//verificação
+		System.out.println(locacao.getValor());
+		System.out.println(locacao.getDataLocacao());
+		System.out.println(locacao.getDataRetorno());
 	}
 }
