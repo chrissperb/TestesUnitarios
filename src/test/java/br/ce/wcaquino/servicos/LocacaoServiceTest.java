@@ -4,7 +4,8 @@ import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import org.junit.Rule;
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 
 import java.util.Date;
@@ -20,7 +21,7 @@ public class LocacaoServiceTest {
      * se use a anotação @Rule e instanciar um ErrorCollector (aqui chamado de error), para que todos os erros
      * possam ser rastreados de uma vez dentro do mesmo teste. */
     @Rule
-    public ErrorCollector collector = new ErrorCollector();
+    public ErrorCollector error = new ErrorCollector();
 
     @Test
     public void testeLocacao() {
@@ -36,11 +37,11 @@ public class LocacaoServiceTest {
         // Usei o static import para a classe Assert
         // Usei um exemplo do uso do ErrorCollector para cada assertiva
         assertEquals(5.0, locacao.getValor(), 0.01);
-        collector.checkThat(locacao.getValor(), is(equalTo(5.0)));
+        error.checkThat(locacao.getValor(), is(equalTo(7.0)));
         assertTrue(isMesmaData(locacao.getDataLocacao(), new Date()));
-        collector.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+        error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
         assertTrue(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)));
-        collector.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(2)), is(true));
+        error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(2)), is(true));
 
         // Usando o assertThat e o CoreMatchers do hamcrest (static import)
         assertThat(locacao.getValor(), is(equalTo(5.0))); // A declaracao dos valores é invertido em relacao ao assertEquals, primeiro o atual, depois o esperado
