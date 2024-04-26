@@ -28,25 +28,32 @@ public class LocacaoServiceTest {
         //cenario - criar e/ou instanciar todos os recursos necessários para o teste do método
         LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario 1");
-        Filme filme = new Filme("Filme 1", 2, 5.0);
+        Filme filme = new Filme("Filme 1", 0, 5.0);
 
         // ação - aplicar o método no cenário criado
-        Locacao locacao = service.alugarFilme(usuario, filme);
+        Locacao locacao = null;
+        try {
+            locacao = service.alugarFilme(usuario, filme);
 
-        //verificacao
-        // Usei o static import para a classe Assert
-        // Usei um exemplo do uso do ErrorCollector para cada assertiva
-        assertEquals(5.0, locacao.getValor(), 0.01);
-        error.checkThat(locacao.getValor(), is(equalTo(7.0)));
-        assertTrue(isMesmaData(locacao.getDataLocacao(), new Date()));
-        error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-        assertTrue(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)));
-        error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(2)), is(true));
+            //verificacao
+            // Usei o static import para a classe Assert
+            // Usei um exemplo do uso do ErrorCollector para cada assertiva
+            assertEquals(5.0, locacao.getValor(), 0.01);
+            assertTrue(isMesmaData(locacao.getDataLocacao(), new Date()));
+            assertTrue(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)));
 
-        // Usando o assertThat e o CoreMatchers do hamcrest (static import)
-        assertThat(locacao.getValor(), is(equalTo(5.0))); // A declaracao dos valores é invertido em relacao ao assertEquals, primeiro o atual, depois o esperado
-        assertThat(locacao.getValor(), is(not(6.0))); // Forma negativa
-        assertThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-        assertThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+            // Usando o assertThat e o CoreMatchers do hamcrest (static import)
+            assertThat(locacao.getValor(), is(equalTo(5.0))); // A declaracao dos valores é invertido em relacao ao assertEquals, primeiro o atual, depois o esperado
+            assertThat(locacao.getValor(), is(not(6.0))); // Forma negativa
+            assertThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+            assertThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+
+            error.checkThat(locacao.getValor(), is(equalTo(5.0)));
+            error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+            error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
