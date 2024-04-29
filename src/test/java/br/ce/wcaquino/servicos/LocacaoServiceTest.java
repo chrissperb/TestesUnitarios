@@ -1,18 +1,21 @@
 package br.ce.wcaquino.servicos;
 
+import Exceptions.FilmeSemEstoqueException;
+import Exceptions.LocadoraException;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
+import org.junit.Assert;
 import org.junit.Rule;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.junit.rules.ExpectedException;
 
 import java.util.Date;
 
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
 
 public class LocacaoServiceTest {
 
@@ -20,10 +23,13 @@ public class LocacaoServiceTest {
      * se use a anotação @Rule e instanciar um ErrorCollector (aqui chamado de error), para que todos os erros
      * possam ser rastreados de uma vez dentro do mesmo teste. */
     @Rule
-    public ErrorCollector collector = new ErrorCollector();
+    public ErrorCollector error = new ErrorCollector();
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testeLocacao() {
+    public void testeLocacao() throws Exception {
         //cenario - criar e/ou instanciar todos os recursos necessários para o teste do método
         LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario 1");
@@ -33,19 +39,47 @@ public class LocacaoServiceTest {
         Locacao locacao = service.alugarFilme(usuario, filme);
 
         //verificacao
-        // Usei o static import para a classe Assert
-        // Usei um exemplo do uso do ErrorCollector para cada assertiva
-        assertEquals(5.0, locacao.getValor(), 0.01);
-        collector.checkThat(locacao.getValor(), is(equalTo(5.0)));
-        assertTrue(isMesmaData(locacao.getDataLocacao(), new Date()));
-        collector.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-        assertTrue(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)));
-        collector.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(2)), is(true));
+        error.checkThat(locacao.getValor(), is(equalTo(5.0)));
+        error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+        error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+    }
 
-        // Usando o assertThat e o CoreMatchers do hamcrest (static import)
-        assertThat(locacao.getValor(), is(equalTo(5.0))); // A declaracao dos valores é invertido em relacao ao assertEquals, primeiro o atual, depois o esperado
-        assertThat(locacao.getValor(), is(not(6.0))); // Forma negativa
-        assertThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-        assertThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+    @Test(expected = FilmeSemEstoqueException.class)
+    public void testLocacao_filmeSemEstoque() throws Exception {
+        //cenario
+        LocacaoService service = new LocacaoService();
+        Usuario usuario = new Usuario("Usuario 1");
+        Filme filme = new Filme("Filme 1", 0, 5.0);
+
+        //acao
+        Locacao locacao = service.alugarFilme(usuario, filme);
+    }
+
+    @Test
+    public void testLocacao_usuarioVazio() throws FilmeSemEstoqueException {
+        //cenario
+        LocacaoService service = new LocacaoService();
+        Filme filme = new Filme("Filme 2", 2, 4.0);
+
+        //acao
+        try {
+            service.alugarFilme(null, filme);
+            Assert.fail();
+        } catch (LocadoraException e) {
+            Assert.assertThat(e.getMessage(), is("Usuário vazio."));
+        }
+    }
+
+    @Test
+    public void testLocacao_filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
+        //cenario
+        LocacaoService service = new LocacaoService();
+        Usuario usuario = new Usuario("Usuario 3");
+
+        exception.expect(LocadoraException.class);
+        exception.expectMessage("Filme vazio.");
+        //acao
+        service.alugarFilme(usuario, null);
+
     }
 }
