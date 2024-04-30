@@ -5,9 +5,7 @@ import Exceptions.LocadoraException;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
@@ -18,6 +16,7 @@ import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.*;
 
 public class LocacaoServiceTest {
+    private LocacaoService service;
 
     /* Para testes onde o cenário e a ação sao os mesmos para diversas assertivas, o professor recomenda que
      * se use a anotação @Rule e instanciar um ErrorCollector (aqui chamado de error), para que todos os erros
@@ -28,10 +27,14 @@ public class LocacaoServiceTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
+    @Before
+    public void setup() {
+        service = new LocacaoService();
+    }
+
     @Test
     public void testeLocacao() throws Exception {
         //cenario - criar e/ou instanciar todos os recursos necessários para o teste do método
-        LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario 1");
         Filme filme = new Filme("Filme 1", 2, 5.0);
 
@@ -47,7 +50,6 @@ public class LocacaoServiceTest {
     @Test(expected = FilmeSemEstoqueException.class)
     public void testLocacao_filmeSemEstoque() throws Exception {
         //cenario
-        LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario 1");
         Filme filme = new Filme("Filme 1", 0, 5.0);
 
@@ -58,7 +60,6 @@ public class LocacaoServiceTest {
     @Test
     public void testLocacao_usuarioVazio() throws FilmeSemEstoqueException {
         //cenario
-        LocacaoService service = new LocacaoService();
         Filme filme = new Filme("Filme 2", 2, 4.0);
 
         //acao
@@ -73,7 +74,6 @@ public class LocacaoServiceTest {
     @Test
     public void testLocacao_filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
         //cenario
-        LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario 3");
 
         exception.expect(LocadoraException.class);
