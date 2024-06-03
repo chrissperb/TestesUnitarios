@@ -12,7 +12,6 @@ import static br.ce.wcaquino.utils.DataUtils.adicionarDias;
 
 public class LocacaoService {
 
-
     public Locacao alugarFilme(Usuario usuario, Filme filme) throws FilmeSemEstoqueException, LocadoraException {
         if (usuario == null) {
             throw new LocadoraException("Usuário vazio.");
