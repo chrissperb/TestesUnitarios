@@ -6,10 +6,7 @@ import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.utils.DataUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
@@ -42,6 +39,8 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveLocarFilme() throws Exception {
+        Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(),Calendar.SATURDAY));
+
         //cenario - criar e/ou instanciar todos os recursos necessários para o teste do método
         Usuario usuario = new Usuario("Usuario 1");
         List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
@@ -161,6 +160,8 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveDevolverFilmeNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
+        Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(),Calendar.SATURDAY));
+
         //cenario
         Usuario usuario = new Usuario("Usuario 1");
         List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
