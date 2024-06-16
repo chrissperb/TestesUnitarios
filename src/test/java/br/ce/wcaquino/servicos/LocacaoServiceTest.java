@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static br.ce.wcaquino.matchers.MatchersProprios.caiNumaSegunda;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.*;
@@ -39,7 +40,7 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveLocarFilme() throws Exception {
-        Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(),Calendar.SATURDAY));
+        Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
         //cenario - criar e/ou instanciar todos os recursos necessários para o teste do método
         Usuario usuario = new Usuario("Usuario 1");
@@ -104,6 +105,7 @@ public class LocacaoServiceTest {
         //verificacao
         assertThat(resultado.getValor(), is(11.0));
     }
+
     @Test
     public void devePagar50PctNoFilme4() throws FilmeSemEstoqueException, LocadoraException {
         //cenario
@@ -160,7 +162,7 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveDevolverFilmeNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
-        Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(),Calendar.SATURDAY));
+        Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
         //cenario
         Usuario usuario = new Usuario("Usuario 1");
@@ -170,8 +172,10 @@ public class LocacaoServiceTest {
         Locacao retorno = service.alugarFilme(usuario, filmes);
 
         //verificacao
-        boolean ehSegunda = DataUtils.verificarDiaSemana(retorno.getDataRetorno(), Calendar.MONDAY);
-        Assert.assertTrue(ehSegunda);
+        //assertThat(retorno.getDataRetorno(), new DiaSemanaMatcher(Calendar.MONDAY));
+        //assertThat(retorno.getDataRetorno(), caiEm(Calendar.MONDAY));
+        assertThat(retorno.getDataRetorno(), caiNumaSegunda());
+
     }
 
 }
