@@ -1,7 +1,7 @@
 package br.ce.wcaquino.servicos;
 
-import Exceptions.FilmeSemEstoqueException;
-import Exceptions.LocadoraException;
+import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
+import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
