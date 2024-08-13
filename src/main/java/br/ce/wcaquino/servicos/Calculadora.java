@@ -1,6 +1,6 @@
 package br.ce.wcaquino.servicos;
 
-import Exceptions.NaoPodeDividirPorZeroException;
+import br.ce.wcaquino.exceptions.NaoPodeDividirPorZeroException;
 
 public class Calculadora {
     public int somar(int a, int b) {
