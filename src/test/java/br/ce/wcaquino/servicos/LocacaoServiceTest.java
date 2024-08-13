@@ -7,6 +7,7 @@ import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.utils.DataUtils;
+import buildermaster.BuilderMaster;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
@@ -182,6 +183,10 @@ public class LocacaoServiceTest {
         //assertThat(retorno.getDataRetorno(), caiEm(Calendar.MONDAY));
         assertThat(retorno.getDataRetorno(), caiNumaSegunda());
 
+    }
+
+    public static void main(String[] args) {
+        new BuilderMaster().gerarCodigoClasse(Locacao.class);
     }
 
 }
