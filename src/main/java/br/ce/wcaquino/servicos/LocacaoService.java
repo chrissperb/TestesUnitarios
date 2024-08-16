@@ -1,11 +1,11 @@
 package br.ce.wcaquino.servicos;
 
 import br.ce.wcaquino.daos.LocacaoDAO;
-import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
-import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
+import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
+import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.utils.DataUtils;
 
 import java.util.Calendar;
@@ -42,10 +42,18 @@ public class LocacaoService {
             Filme filme = filmes.get(i);
             Double valorFilme = filme.getPrecoLocacao();
             switch (i) {
-                case 2: valorFilme = valorFilme * 0.75; break;
-                case 3: valorFilme = valorFilme * 0.5; break;
-                case 4: valorFilme = valorFilme * 0.25; break;
-                case 5: valorFilme = 0d; break;
+                case 2:
+                    valorFilme = valorFilme * 0.75;
+                    break;
+                case 3:
+                    valorFilme = valorFilme * 0.5;
+                    break;
+                case 4:
+                    valorFilme = valorFilme * 0.25;
+                    break;
+                case 5:
+                    valorFilme = 0d;
+                    break;
             }
             valorTotal += valorFilme;
         }
@@ -54,7 +62,7 @@ public class LocacaoService {
         //Entrega no dia seguinte
         Date dataEntrega = new Date();
         dataEntrega = adicionarDias(dataEntrega, 1);
-        if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY)) {
+        if (DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY)) {
             dataEntrega = adicionarDias(dataEntrega, 1);
         }
         locacao.setDataRetorno(dataEntrega);
@@ -65,4 +73,7 @@ public class LocacaoService {
         return locacao;
     }
 
+    public void setLocacaoDao(LocacaoDAO dao) {
+        this.dao = dao;
+    }
 }
