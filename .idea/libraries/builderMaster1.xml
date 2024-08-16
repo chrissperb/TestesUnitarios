@@ -1,12 +1,9 @@
 <component name="libraryTable">
-  <library name="builderMaster">
+  <library name="builderMaster1">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/libs/builderMaster.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
-    <excluded>
-      <root url="jar://$PROJECT_DIR$/libs/builderMaster.jar!/" />
-    </excluded>
   </library>
 </component>
