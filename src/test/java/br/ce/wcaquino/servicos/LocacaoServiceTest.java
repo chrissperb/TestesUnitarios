@@ -7,11 +7,9 @@ import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.utils.DataUtils;
-import buildermaster.BuilderMaster;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -27,9 +25,13 @@ import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class LocacaoServiceTest {
     private LocacaoService service;
+    private SPCService spc;
+    private LocacaoDAO dao;
 
     /* Para testes onde o cenário e a ação sao os mesmos para diversas assertivas, o professor recomenda que
      * se use a anotação @Rule e instanciar um ErrorCollector (aqui chamado de error), para que todos os erros
@@ -43,8 +45,10 @@ public class LocacaoServiceTest {
     @Before
     public void setup() {
         service = new LocacaoService();
-        LocacaoDAO dao = Mockito.mock(LocacaoDAO.class);
-        service.setLocacaoDao(dao);
+        dao = mock(LocacaoDAO.class);
+        service.setLocacaoDAO(dao);
+        spc = mock(SPCService.class);
+        service.setSpcService(spc);
     }
 
     @Test
@@ -189,8 +193,23 @@ public class LocacaoServiceTest {
 
     }
 
-    public static void main(String[] args) {
-        new BuilderMaster().gerarCodigoClasse(Locacao.class);
+    @Test
+    public void naoDeveAlugarFilmeParaNegativadoSPC() throws FilmeSemEstoqueException, LocadoraException {
+        //cenario
+        Usuario usuario = umUsuario().agora();
+        List<Filme> filmes = Arrays.asList(umFilme().agora());
+
+        exception.expect(LocadoraException.class);
+        exception.expectMessage("Usuario negativado.");
+
+        when(spc.possuiNegativacao(usuario)).thenReturn(true);
+
+        //acao
+        service.alugarFilme(usuario,filmes);
     }
 
+/*    public static void main(String[] args) {
+        new BuilderMaster().gerarCodigoClasse(Locacao.class);
+    }
+*/
 }
