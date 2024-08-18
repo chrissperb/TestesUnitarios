@@ -1,6 +1,5 @@
 package br.ce.wcaquino.servicos;
 
-import br.ce.wcaquino.builders.UsuarioBuilder;
 import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -8,7 +7,10 @@ import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.utils.DataUtils;
-import org.junit.*;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
@@ -22,15 +24,13 @@ import static br.ce.wcaquino.builders.UsuarioBuilder.umUsuario;
 import static br.ce.wcaquino.matchers.MatchersProprios.*;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
-import static java.util.Arrays.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
 
 public class LocacaoServiceTest {
     private LocacaoService service;
@@ -95,7 +95,7 @@ public class LocacaoServiceTest {
         //acao
         try {
             service.alugarFilme(null, filmes);
-            Assert.fail();
+            fail();
         } catch (LocadoraException e) {
             assertThat(e.getMessage(), is("Usuário vazio."));
         }
@@ -207,16 +207,16 @@ public class LocacaoServiceTest {
         Usuario usuario2 = umUsuario().comNome("Usuario 2").agora();
         List<Filme> filmes = asList(umFilme().agora());
 
-        when(spc.possuiNegativacao(usuario)).thenReturn(true);
+        when(spc.possuiNegativacao(Mockito.any(Usuario.class))).thenReturn(true);
 
         //acao
         try {
 
-        //verificacao
+            //verificacao
             service.alugarFilme(usuario, filmes);
-            Assert.fail();
+            fail();
         } catch (LocadoraException e) {
-            Assert.assertThat(e.getMessage(), is("Usuario negativado."));
+            assertThat(e.getMessage(), is("Usuario negativado."));
         }
 
         verify(spc).possuiNegativacao(usuario);
@@ -225,19 +225,25 @@ public class LocacaoServiceTest {
     @Test
     public void deveEnviarEmailParaLocacoesAtrasadas() {
         //cenario
-        Usuario usuario = umUsuario().agora();
-        List<Locacao> locacoes = asList(
-                umLocacao()
-                        .comUsuario(usuario)
-                        .comDataRetorno(obterDataComDiferencaDias(-2))
-                        .agora());
+        Usuario usuarioAtrasado = umUsuario().comNome("Usuario atrasado").agora();
+        Usuario usuarioEmDia = umUsuario().comNome("Usuario em dia").agora();
+        Usuario outroAtrasado = umUsuario().comNome("Outro atrasado").agora();
+        List<Locacao> locacoes = Arrays.asList(
+                umLocacao().atrasada().comUsuario(usuarioAtrasado).agora(),
+                umLocacao().comUsuario(usuarioEmDia).agora(),
+                umLocacao().atrasada().comUsuario(outroAtrasado).agora(),
+                umLocacao().atrasada().comUsuario(outroAtrasado).agora());
         when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
 
         //acao
         service.notificarAtrasos();
 
-        //verificacao
-        verify(email).notificarAtraso(usuario);
+        //verificacao - varias possibilidades
+        verify(email, times(3)).notificarAtraso(any(Usuario.class));
+        verify(email).notificarAtraso(usuarioAtrasado);
+        verify(email, Mockito.atLeastOnce()).notificarAtraso(outroAtrasado);
+        verify(email, never()).notificarAtraso(usuarioEmDia);
+        verifyNoMoreInteractions(email);
     }
 
 /*    public static void main(String[] args) {

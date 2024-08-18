@@ -15,11 +15,9 @@ public class UsuarioBuilder {
         return builder;
     }
 
-    public static UsuarioBuilder comNome(String nome) {
-        UsuarioBuilder builder = new UsuarioBuilder();
-        builder.usuario = new Usuario();
-        builder.usuario.setNome(nome);
-        return builder;
+    public UsuarioBuilder comNome(String nome) {
+        usuario.setNome(nome);
+        return this;
     }
 
     public Usuario agora(){
