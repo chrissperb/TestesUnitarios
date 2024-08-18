@@ -21,6 +21,13 @@ public class Usuario {
 	}
 
 	@Override
+	public String toString() {
+		return "Usuario{" +
+				"nome='" + nome + '\'' +
+				'}';
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
@@ -30,13 +37,6 @@ public class Usuario {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(nome);
-	}
-
-	@Override
-	public String toString() {
-		return "Usuario{" +
-				"nome='" + nome + '\'' +
-				'}';
+		return Objects.hashCode(nome);
 	}
 }
