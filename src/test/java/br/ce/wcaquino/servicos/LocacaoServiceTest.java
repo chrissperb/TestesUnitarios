@@ -13,7 +13,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.*;
 
@@ -33,9 +36,15 @@ import static org.mockito.Mockito.*;
 
 
 public class LocacaoServiceTest {
+
+    @InjectMocks
     private LocacaoService service;
+
+    @Mock
     private SPCService spc;
+    @Mock
     private LocacaoDAO dao;
+    @Mock
     private EmailService email;
 
     /* Para testes onde o cenário e a ação sao os mesmos para diversas assertivas, o professor recomenda que
@@ -49,13 +58,7 @@ public class LocacaoServiceTest {
 
     @Before
     public void setup() {
-        service = new LocacaoService();
-        dao = mock(LocacaoDAO.class);
-        service.setLocacaoDAO(dao);
-        spc = mock(SPCService.class);
-        service.setSpcService(spc);
-        email = mock(EmailService.class);
-        service.setEmailService(email);
+        MockitoAnnotations.openMocks(this); //usei o openMocks ao invés do initMocks, como usado no curso
     }
 
     @Test
