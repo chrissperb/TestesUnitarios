@@ -99,13 +99,13 @@ public class LocacaoServiceTest {
         try {
             service.alugarFilme(null, filmes);
             fail();
-        } catch (LocadoraException e) {
+        } catch (Exception e) {
             assertThat(e.getMessage(), is("Usuário vazio."));
         }
     }
 
     @Test
-    public void naoDeveAlugarFilmeVazio() throws FilmeSemEstoqueException, LocadoraException {
+    public void naoDeveAlugarFilmeVazio() throws Exception {
         //cenario
         Usuario usuario = umUsuario().agora();
 
@@ -116,7 +116,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void devePagar75PctNoFilme3() throws FilmeSemEstoqueException, LocadoraException {
+    public void devePagar75PctNoFilme3() throws Exception {
         //cenario
         Usuario usuario = umUsuario().agora();
         List<Filme> filmes = asList(
@@ -132,7 +132,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void devePagar50PctNoFilme4() throws FilmeSemEstoqueException, LocadoraException {
+    public void devePagar50PctNoFilme4() throws Exception {
         //cenario
         Usuario usuario = umUsuario().agora();
         List<Filme> filmes = asList(
@@ -149,7 +149,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void devePagar25PctNoFilme5() throws FilmeSemEstoqueException, LocadoraException {
+    public void devePagar25PctNoFilme5() throws Exception {
         //cenario
         Usuario usuario = umUsuario().agora();
         List<Filme> filmes = asList(
@@ -167,7 +167,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void devePagar0PctNoFilme6() throws FilmeSemEstoqueException, LocadoraException {
+    public void devePagar0PctNoFilme6() throws Exception {
         //cenario
         Usuario usuario = umUsuario().agora();
         List<Filme> filmes = asList(
@@ -186,7 +186,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void deveDevolverFilmeNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
+    public void deveDevolverFilmeNaSegundaAoAlugarNoSabado() throws Exception {
         Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
         //cenario
@@ -204,7 +204,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void naoDeveAlugarFilmeParaNegativadoSPC() throws FilmeSemEstoqueException {
+    public void naoDeveAlugarFilmeParaNegativadoSPC() throws Exception {
         //cenario
         Usuario usuario = umUsuario().agora();
         Usuario usuario2 = umUsuario().comNome("Usuario 2").agora();
@@ -253,4 +253,21 @@ public class LocacaoServiceTest {
         new BuilderMaster().gerarCodigoClasse(Locacao.class);
     }
 */
+
+    @Test
+    public void deveTratarErroNoSPC() throws Exception {
+        //cenario
+        Usuario usuario = umUsuario().agora();
+        List<Filme> filmes = Arrays.asList(umFilme().agora());
+
+        when(spc.possuiNegativacao(usuario)).thenThrow(new Exception("Falha catastrófica."));
+
+        //verificacao
+        exception.expect(LocadoraException.class);
+        exception.expectMessage("Problemas com o SPC, tente novamente.");
+
+        //acao
+        service.alugarFilme(usuario, filmes);
+
+    }
 }
