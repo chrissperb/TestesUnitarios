@@ -20,7 +20,7 @@ public class LocacaoService {
     private SPCService spcService;
     private EmailService emailService;
 
-    public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws FilmeSemEstoqueException, LocadoraException {
+    public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws Exception {
         if (usuario == null) {
             throw new LocadoraException("Usuário vazio.");
         }
@@ -34,7 +34,17 @@ public class LocacaoService {
             }
         }
 
-        if (spcService.possuiNegativacao(usuario)) {
+
+        boolean negativado;
+
+        try {
+            negativado = spcService.possuiNegativacao(usuario);
+
+        } catch (Exception e) {
+            throw new LocadoraException("Problemas com o SPC, tente novamente.");
+        }
+
+        if (negativado) {
             throw new LocadoraException("Usuario negativado.");
         }
 

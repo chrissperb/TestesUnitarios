@@ -68,7 +68,7 @@ public class CalculoValorLocacaoTest {
     }
 
     @Test
-    public void deveCalcularValorLocacaoConsiderandoDescontos() throws FilmeSemEstoqueException, LocadoraException {
+    public void deveCalcularValorLocacaoConsiderandoDescontos() throws Exception {
         //cenario
         Usuario usuario = new Usuario();
         //acao
