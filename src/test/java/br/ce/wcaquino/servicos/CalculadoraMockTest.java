@@ -4,14 +4,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.openMocks;
 
 public class CalculadoraMockTest {
 
@@ -30,7 +27,7 @@ public class CalculadoraMockTest {
 
     @Before
     public void setup() {
-        openMocks(this); //No curso usamos o initMocks, que foi depreciado.
+        MockitoAnnotations.initMocks(this); //No curso usamos o initMocks, que foi depreciado.
     }
 
     @Test
