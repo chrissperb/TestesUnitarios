@@ -13,7 +13,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.*;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.Mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.*;
 
@@ -30,8 +38,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({LocacaoService.class, DataUtils.class})
 public class LocacaoServiceTest {
 
     @InjectMocks
@@ -47,6 +58,7 @@ public class LocacaoServiceTest {
     /* Para testes onde o cenário e a ação sao os mesmos para diversas assertivas, o professor recomenda que
      * se use a anotação @Rule e instanciar um ErrorCollector (aqui chamado de error), para que todos os erros
      * possam ser rastreados de uma vez dentro do mesmo teste. */
+
     @Rule
     public ErrorCollector error = new ErrorCollector();
 
@@ -55,16 +67,18 @@ public class LocacaoServiceTest {
 
     @Before
     public void setup() {
-        MockitoAnnotations.openMocks(this); //usei o openMocks ao invés do initMocks, como usado no curso
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void deveLocarFilme() throws Exception {
-        Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+    public void deveAlugarFilme() throws Exception {
+        // Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY)); --> Trecho comentado quando usamos o PowerMock
 
         //cenario - criar e/ou instanciar todos os recursos necessários para o teste do método
         Usuario usuario = umUsuario().agora();
         List<Filme> filmes = Collections.singletonList(umFilme().comValor(5.0).agora());
+
+        whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(27,9,2024));
 
         // ação - aplicar o método no cenário criado
         Locacao locacao = service.alugarFilme(usuario, filmes);
@@ -75,6 +89,8 @@ public class LocacaoServiceTest {
         error.checkThat(locacao.getDataLocacao(), ehHoje());
         error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
         error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
+        error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), DataUtils.obterData(27,9,2024)), is(true));
+        error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterData(28,9,2024)), is(true));
     }
 
     @Test(expected = FilmeSemEstoqueException.class)
@@ -184,11 +200,11 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveDevolverFilmeNaSegundaAoAlugarNoSabado() throws Exception {
-        Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-
         //cenario
         Usuario usuario = umUsuario().agora();
         List<Filme> filmes = Collections.singletonList(umFilme().agora());
+
+        whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(28,9,2024));
 
         //acao
         Locacao retorno = service.alugarFilme(usuario, filmes);
@@ -197,6 +213,7 @@ public class LocacaoServiceTest {
         //assertThat(retorno.getDataRetorno(), new DiaSemanaMatcher(Calendar.MONDAY));
         //assertThat(retorno.getDataRetorno(), caiEm(Calendar.MONDAY));
         assertThat(retorno.getDataRetorno(), caiNumaSegunda());
+        PowerMockito.verifyNew(Date.class, Mockito.times(2)).withNoArguments();
 
     }
 
@@ -207,7 +224,7 @@ public class LocacaoServiceTest {
         Usuario usuario2 = umUsuario().comNome("Usuario 2").agora();
         List<Filme> filmes = asList(umFilme().agora());
 
-        when(spc.possuiNegativacao(Mockito.any(Usuario.class))).thenReturn(true);
+        when(spc.possuiNegativacao(any(Usuario.class))).thenReturn(true);
 
         //acao
         try {
@@ -219,7 +236,7 @@ public class LocacaoServiceTest {
             assertThat(e.getMessage(), is("Usuario negativado."));
         }
 
-        verify(spc).possuiNegativacao(usuario);
+        Mockito.verify(spc).possuiNegativacao(usuario);
     }
 
     @Test
@@ -239,11 +256,11 @@ public class LocacaoServiceTest {
         service.notificarAtrasos();
 
         //verificacao - varias possibilidades
-        verify(email, times(3)).notificarAtraso(any(Usuario.class));
-        verify(email).notificarAtraso(usuarioAtrasado);
-        verify(email, Mockito.atLeastOnce()).notificarAtraso(outroAtrasado);
-        verify(email, never()).notificarAtraso(usuarioEmDia);
-        verifyNoMoreInteractions(email);
+        Mockito.verify(email, times(3)).notificarAtraso(any(Usuario.class));
+        Mockito.verify(email).notificarAtraso(usuarioAtrasado);
+        Mockito.verify(email, atLeastOnce()).notificarAtraso(outroAtrasado);
+        Mockito.verify(email, never()).notificarAtraso(usuarioEmDia);
+        Mockito.verifyNoMoreInteractions(email);
     }
 
 /*    public static void main(String[] args) {
