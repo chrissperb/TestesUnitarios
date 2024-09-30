@@ -7,7 +7,6 @@ import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.utils.DataUtils;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,7 +41,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({LocacaoService.class, DataUtils.class})
+@PrepareForTest({LocacaoService.class})
 public class LocacaoServiceTest {
 
     @InjectMocks
@@ -78,19 +77,26 @@ public class LocacaoServiceTest {
         Usuario usuario = umUsuario().agora();
         List<Filme> filmes = Collections.singletonList(umFilme().comValor(5.0).agora());
 
-        whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(27,9,2024));
+//        whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(27, 9, 2024));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 27);
+        calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
+        calendar.set(Calendar.YEAR, 2024);
+        PowerMockito.mockStatic(Calendar.class);
+        PowerMockito.when(Calendar.getInstance()).thenReturn(calendar);
 
         // ação - aplicar o método no cenário criado
         Locacao locacao = service.alugarFilme(usuario, filmes);
 
         //verificacao
         error.checkThat(locacao.getValor(), is(equalTo(5.0)));
-        error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-        error.checkThat(locacao.getDataLocacao(), ehHoje());
-        error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
-        error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
-        error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), DataUtils.obterData(27,9,2024)), is(true));
-        error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterData(28,9,2024)), is(true));
+//        error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+//        error.checkThat(locacao.getDataLocacao(), ehHoje());
+//        error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+//        error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
+        error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), DataUtils.obterData(27, 9, 2024)), is(true));
+        error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterData(28, 9, 2024)), is(true));
     }
 
     @Test(expected = FilmeSemEstoqueException.class)
@@ -204,7 +210,13 @@ public class LocacaoServiceTest {
         Usuario usuario = umUsuario().agora();
         List<Filme> filmes = Collections.singletonList(umFilme().agora());
 
-        whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(28,9,2024));
+//        whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(28,9,2024));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 28);
+        calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
+        calendar.set(Calendar.YEAR, 2024);
+        PowerMockito.mockStatic(Calendar.class);
+        PowerMockito.when(Calendar.getInstance()).thenReturn(calendar);
 
         //acao
         Locacao retorno = service.alugarFilme(usuario, filmes);
@@ -213,8 +225,10 @@ public class LocacaoServiceTest {
         //assertThat(retorno.getDataRetorno(), new DiaSemanaMatcher(Calendar.MONDAY));
         //assertThat(retorno.getDataRetorno(), caiEm(Calendar.MONDAY));
         assertThat(retorno.getDataRetorno(), caiNumaSegunda());
-        PowerMockito.verifyNew(Date.class, Mockito.times(2)).withNoArguments();
+//        PowerMockito.verifyNew(Date.class, Mockito.times(2)).withNoArguments();
 
+        PowerMockito.verifyStatic(Mockito.times(2));
+        Calendar.getInstance();
     }
 
     @Test
