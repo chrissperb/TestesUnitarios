@@ -18,7 +18,7 @@ public class CalculadoraMockTest {
     @Spy
     private Calculadora calcSpy;
 
-//    @Spy
+    //    @Spy
     @Mock
     private EmailService email; //O @Spy não deveria funcionar neste caso, pois interfaces não são instanciáveis.
 
@@ -33,17 +33,8 @@ public class CalculadoraMockTest {
     @Test
     public void devoMostrarDiferencaEntreMockSpy() {
         when(calcMock.somar(1, 2)).thenReturn(5); //Solicita que o Mock use o método real
-//        when(calcSpy.somar(1, 2)).thenReturn(5);
         doNothing().when(calcSpy).imprime();
         doReturn(5).when(calcSpy).somar(1, 2); //Desta forma o método somar não foi executado.
-
-        System.out.println("Mock: " + calcMock.somar(1, 2));
-        System.out.println("Spy: " + calcSpy.somar(1, 2));
-
-        System.out.println("Mock");
-        calcMock.imprime();
-        System.out.println("Spy");
-        calcSpy.imprime();
     }
 
     @Test
@@ -54,7 +45,6 @@ public class CalculadoraMockTest {
         when(calc.somar(argCapt.capture(), argCapt.capture())).thenReturn(5);
 
         assertEquals(5, calc.somar(1, 100000));
-        System.out.println(argCapt.getAllValues());
     }
 
     // Esta classe e método foram criados para exemplificar que, em um matcher do Mockito,
