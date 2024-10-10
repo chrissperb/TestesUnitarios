@@ -21,17 +21,49 @@ TestesUnitarios/
 ```mermaid
 classDiagram
     class Locacao {
-        +Usuario usuario
-        +Date dataLocacao
-        +Date dataRetorno
-        +Double valor
+        - Date dataLocacao
+        - Date dataRetorno
+        - Double valor
+        + getDataLocacao()
+        + getDataRetorno()
+        + getValor()
     }
 
     class Usuario {
-        +String nome
+        - String nome
+        + getNome()
+        + setNome(String nome)
     }
 
-    Locacao --> Usuario
+    class Filme {
+        - String nome
+        - Integer estoque
+        - Double precoLocacao
+        + getNome()
+        + getEstoque()
+        + getPrecoLocacao()
+    }
+
+    class LocacaoService {
+        - LocacaoDAO dao
+        - SPCService spcService
+        - EmailService emailService
+        + alugarFilme(Usuario usuario, List<Filme> filmes)
+        + notificarAtrasos()
+    }
+
+    class Calculadora {
+        + somar(int a, int b)
+        + subtrair(int a, int b)
+        + dividir(int a, int b)
+    }
+
+    Locacao --> Filme : depends on
+    Locacao --> Usuario : depends on
+    LocacaoService --> Locacao : creates
+    LocacaoService --> SPCService : uses
+    LocacaoService --> EmailService : uses
+    LocacaoService --> LocacaoDAO : uses
 ```
 
 ## Instalação
