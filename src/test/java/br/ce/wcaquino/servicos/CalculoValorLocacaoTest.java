@@ -4,8 +4,6 @@ import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
-import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
-import br.ce.wcaquino.exceptions.LocadoraException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,10 +73,5 @@ public class CalculoValorLocacaoTest {
         Locacao resultado = service.alugarFilme(usuario, filmes);
         //verificacao
         assertThat(resultado.getValor(), is(valorLocacao));
-    }
-
-    @Test
-    public void print() {
-        System.out.println(valorLocacao);
     }
 }
