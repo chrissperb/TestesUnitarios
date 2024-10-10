@@ -5,16 +5,60 @@ Este repositório contém o código desenvolvido ao longo do curso sobre **Teste
 ## Estrutura do Repositório
 
 ```bash
-TestesUnitarios/
-├── .idea/
-├── libs/
-├── src/
-│   ├── main/
-│   └── test/
-├── .classpath
-├── .gitignore
-├── .project
-└── pom.xml
+.
+├── libs
+├── src
+│   ├── main
+│   │   └── java
+│   │       └── br
+│   │           └── ce
+│   │               └── wcaquino
+│   │                   ├── daos
+│   │                   ├── entidades
+│   │                   ├── exceptions
+│   │                   ├── servicos
+│   │                   └── utils
+│   └── test
+│       └── java
+│           └── br
+│               └── ce
+│                   └── wcaquino
+│                       ├── builders
+│                       ├── matchers
+│                       ├── runners
+│                       ├── servicos
+│                       └── suites
+└── target
+    ├── classes
+    │   └── br
+    │       └── ce
+    │           └── wcaquino
+    │               ├── daos
+    │               ├── entidades
+    │               ├── exceptions
+    │               ├── servicos
+    │               └── utils
+    ├── generated-sources
+    │   └── annotations
+    ├── generated-test-sources
+    │   └── test-annotations
+    ├── maven-status
+    │   └── maven-compiler-plugin
+    │       ├── compile
+    │       │   └── default-compile
+    │       └── testCompile
+    │           └── default-testCompile
+    ├── surefire-reports
+    └── test-classes
+        └── br
+            └── ce
+                └── wcaquino
+                    ├── builders
+                    ├── matchers
+                    ├── runners
+                    ├── servicos
+                    └── suites
+
 ```
 
 ## Diagrama de classes
